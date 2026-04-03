@@ -1,0 +1,172 @@
+{
+  "info": {
+    "name": "StackTrace API",
+    "description": "API endpoints for the StackTrace system.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "health"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Ingest Target Log",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{api_key}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"level\": \"error\",\n  \"message\": \"Falha no pagamento\",\n  \"service\": \"checkout\",\n  \"metadata\": { \"userId\": 123 }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/logs",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "logs"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Ingest Batch Logs",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{api_key}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "[\n  {\n    \"level\": \"info\",\n    \"message\": \"User logon\",\n    \"service\": \"auth\"\n  },\n  {\n    \"level\": \"warn\",\n    \"message\": \"High latency\",\n    \"service\": \"api\"\n  }\n]",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/logs/batch",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "logs",
+            "batch"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Logs",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{api_key}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/logs?limit=50&level=error",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "logs"
+          ],
+          "query": [
+            {
+              "key": "limit",
+              "value": "50"
+            },
+            {
+              "key": "level",
+              "value": "error"
+            },
+            {
+              "key": "service",
+              "value": "checkout",
+              "disabled": true
+            },
+            {
+              "key": "cursor",
+              "value": "",
+              "disabled": true
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "api_key",
+      "value": "e1916124-21cd-4603-884b-dba83f61871e",
+      "type": "string"
+    }
+  ]
+}
