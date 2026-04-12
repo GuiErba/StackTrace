@@ -1,0 +1,38 @@
+{
+  "name": "@stacktrace-dev/sdk",
+  "version": "0.1.0",
+  "description": "Lightweight Node.js SDK for StackTrace — log ingestion with batching, retry, and framework middlewares.",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch"
+  },
+  "keywords": [
+    "stacktrace",
+    "logging",
+    "observability",
+    "monitoring",
+    "error-tracking"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0"
+  }
+}
