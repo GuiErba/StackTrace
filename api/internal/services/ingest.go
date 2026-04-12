@@ -31,6 +31,9 @@ func InitIngest(db *sql.DB) {
 func Enqueue(entry models.LogEntry) bool {
 	select {
 	case logChannel <- entry:
+		if entry.Level == "error" {
+			NotifyError(entry)
+		}
 		return true
 	default:
 		log.Println("WARNING: log channel full, dropping log")
