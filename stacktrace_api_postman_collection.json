@@ -1,160 +1,197 @@
 {
   "info": {
     "name": "StackTrace API",
-    "description": "API endpoints for the StackTrace system.",
+    "description": "Complete API collection for the StackTrace observability platform.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "Health Check",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{base_url}}/health",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "health"
-          ]
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            }
+          }
         }
-      }
+      ]
     },
     {
-      "name": "Ingest Target Log",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Authorization",
-            "value": "Bearer {{api_key}}",
-            "type": "text"
-          },
-          {
-            "key": "Content-Type",
-            "value": "application/json",
-            "type": "text"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"level\": \"error\",\n  \"message\": \"Falha no pagamento\",\n  \"service\": \"checkout\",\n  \"metadata\": { \"userId\": 123 }\n}",
-          "options": {
-            "raw": {
-              "language": "json"
+      "name": "Logs",
+      "item": [
+        {
+          "name": "Ingest Single Log",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{api_key}}", "type": "text" },
+              { "key": "Content-Type", "value": "application/json", "type": "text" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"level\": \"error\",\n  \"message\": \"Payment failed\",\n  \"service\": \"checkout\",\n  \"metadata\": {\n    \"userId\": 123,\n    \"endpoint\": \"/checkout\"\n  }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/logs",
+              "host": ["{{base_url}}"],
+              "path": ["logs"]
             }
           }
         },
-        "url": {
-          "raw": "{{base_url}}/logs",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "logs"
-          ]
-        }
-      }
-    },
-    {
-      "name": "Ingest Batch Logs",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Authorization",
-            "value": "Bearer {{api_key}}",
-            "type": "text"
-          },
-          {
-            "key": "Content-Type",
-            "value": "application/json",
-            "type": "text"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "[\n  {\n    \"level\": \"info\",\n    \"message\": \"User logon\",\n    \"service\": \"auth\"\n  },\n  {\n    \"level\": \"warn\",\n    \"message\": \"High latency\",\n    \"service\": \"api\"\n  }\n]",
-          "options": {
-            "raw": {
-              "language": "json"
+        {
+          "name": "Ingest Batch Logs",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{api_key}}", "type": "text" },
+              { "key": "Content-Type", "value": "application/json", "type": "text" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"level\": \"info\",\n    \"message\": \"User login\",\n    \"service\": \"auth\"\n  },\n  {\n    \"level\": \"warn\",\n    \"message\": \"High latency\",\n    \"service\": \"api\"\n  },\n  {\n    \"level\": \"error\",\n    \"message\": \"Timeout on external API\",\n    \"service\": \"integrations\"\n  }\n]",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/logs/batch",
+              "host": ["{{base_url}}"],
+              "path": ["logs", "batch"]
             }
           }
         },
-        "url": {
-          "raw": "{{base_url}}/logs/batch",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "logs",
-            "batch"
-          ]
-        }
-      }
-    },
-    {
-      "name": "Get Logs",
-      "request": {
-        "method": "GET",
-        "header": [
-          {
-            "key": "Authorization",
-            "value": "Bearer {{api_key}}",
-            "type": "text"
-          }
-        ],
-        "url": {
-          "raw": "{{base_url}}/logs?limit=50&level=error",
-          "host": [
-            "{{base_url}}"
-          ],
-          "path": [
-            "logs"
-          ],
-          "query": [
-            {
-              "key": "limit",
-              "value": "50"
-            },
-            {
-              "key": "level",
-              "value": "error"
-            },
-            {
-              "key": "service",
-              "value": "checkout",
-              "disabled": true
-            },
-            {
-              "key": "cursor",
-              "value": "",
-              "disabled": true
+        {
+          "name": "Query Logs",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{api_key}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/logs?limit=50",
+              "host": ["{{base_url}}"],
+              "path": ["logs"],
+              "query": [
+                { "key": "limit", "value": "50" },
+                { "key": "level", "value": "error", "disabled": true },
+                { "key": "service", "value": "checkout", "disabled": true },
+                { "key": "trace_id", "value": "", "disabled": true },
+                { "key": "from", "value": "2026-04-01T00:00:00Z", "disabled": true },
+                { "key": "to", "value": "2026-04-30T23:59:59Z", "disabled": true },
+                { "key": "cursor", "value": "", "disabled": true }
+              ]
             }
-          ]
+          }
         }
-      }
-    }
-  ],
-  "event": [
-    {
-      "listen": "prerequest",
-      "script": {
-        "type": "text/javascript",
-        "exec": [
-          ""
-        ]
-      }
+      ]
     },
     {
-      "listen": "test",
-      "script": {
-        "type": "text/javascript",
-        "exec": [
-          ""
-        ]
-      }
+      "name": "Alert Rules",
+      "item": [
+        {
+          "name": "Create Alert Rule",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{api_key}}", "type": "text" },
+              { "key": "Content-Type", "value": "application/json", "type": "text" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"condition\": \"error_count\",\n  \"threshold\": 5,\n  \"window_seconds\": 60,\n  \"channel\": \"email\",\n  \"destination\": \"gui@test.com\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/alert-rules",
+              "host": ["{{base_url}}"],
+              "path": ["alert-rules"]
+            }
+          }
+        },
+        {
+          "name": "List Alert Rules",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{api_key}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/alert-rules",
+              "host": ["{{base_url}}"],
+              "path": ["alert-rules"]
+            }
+          }
+        },
+        {
+          "name": "Delete Alert Rule",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{api_key}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/alert-rules/{{alert_rule_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["alert-rules", "{{alert_rule_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Incidents",
+      "item": [
+        {
+          "name": "List Incidents",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{api_key}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/incidents",
+              "host": ["{{base_url}}"],
+              "path": ["incidents"]
+            }
+          }
+        },
+        {
+          "name": "Resolve Incident",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{api_key}}", "type": "text" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/incidents/{{incident_id}}/resolve",
+              "host": ["{{base_url}}"],
+              "path": ["incidents", "{{incident_id}}", "resolve"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Status Page",
+      "item": [
+        {
+          "name": "Get Public Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/status/{{project_slug}}",
+              "host": ["{{base_url}}"],
+              "path": ["status", "{{project_slug}}"]
+            }
+          }
+        }
+      ]
     }
   ],
   "variable": [
@@ -166,6 +203,21 @@
     {
       "key": "api_key",
       "value": "e1916124-21cd-4603-884b-dba83f61871e",
+      "type": "string"
+    },
+    {
+      "key": "project_slug",
+      "value": "meu-app-teste",
+      "type": "string"
+    },
+    {
+      "key": "alert_rule_id",
+      "value": "REPLACE_WITH_ACTUAL_ID",
+      "type": "string"
+    },
+    {
+      "key": "incident_id",
+      "value": "REPLACE_WITH_ACTUAL_ID",
       "type": "string"
     }
   ]
