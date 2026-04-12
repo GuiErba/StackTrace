@@ -12,6 +12,7 @@ import (
 	"stacktrace/internal/handlers"
 	"stacktrace/internal/middleware"
 	"stacktrace/internal/services"
+	"stacktrace/pkg/notify"
 )
 
 func main() {
@@ -35,12 +36,29 @@ func main() {
 	services.InitIngest(db)
 	log.Println("Ingest workers started")
 
+	var emailNotifier *notify.EmailNotifier
+	resendKey := os.Getenv("RESEND_API_KEY")
+	resendFrom := os.Getenv("RESEND_FROM")
+	if resendKey != "" && resendFrom != "" {
+		emailNotifier = notify.NewEmailNotifier(resendKey, resendFrom)
+		log.Println("Email notifier initialized")
+	} else {
+		log.Println("Warning: RESEND_API_KEY or RESEND_FROM not set, email alerts disabled")
+	}
+
+	services.InitAlertWorker(db, emailNotifier)
+	log.Println("Alert worker started")
+
 	router := gin.Default()
 
 	healthHandler := handlers.NewHealthHandler(db)
 	logHandler := handlers.NewLogHandler(db)
+	alertRuleHandler := handlers.NewAlertRuleHandler(db)
+	incidentHandler := handlers.NewIncidentHandler(db)
+	statusHandler := handlers.NewStatusHandler(db)
 
 	router.GET("/health", healthHandler.Check)
+	router.GET("/status/:slug", statusHandler.GetBySlug)
 
 	auth := router.Group("/")
 	auth.Use(middleware.Auth(db))
@@ -49,6 +67,13 @@ func main() {
 		auth.POST("/logs", logHandler.IngestLog)
 		auth.POST("/logs/batch", logHandler.IngestBatch)
 		auth.GET("/logs", logHandler.QueryLogs)
+
+		auth.POST("/alert-rules", alertRuleHandler.Create)
+		auth.GET("/alert-rules", alertRuleHandler.List)
+		auth.DELETE("/alert-rules/:id", alertRuleHandler.Delete)
+
+		auth.GET("/incidents", incidentHandler.List)
+		auth.PATCH("/incidents/:id/resolve", incidentHandler.Resolve)
 	}
 
 	port := os.Getenv("PORT")
