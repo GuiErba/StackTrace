@@ -76,17 +76,23 @@ func (w *alertWorker) evaluate() {
 	defer w.mu.Unlock()
 
 	for projectID, timestamps := range w.windows {
+        if len(timestamps) == 0 {
+            continue
+        }
 		rules, err := repository.GetAlertRulesByProjectID(w.db, projectID)
-		if err != nil || len(rules) == 0 {
+		if err != nil {
 			continue
 		}
+        if len(rules) == 0 {
+            continue
+        }
 
 		for _, rule := range rules {
 			if rule.Condition != "error_count" {
 				continue
 			}
 
-			cutoff := time.Now().Add(-time.Duration(rule.WindowSeconds) * time.Second)
+			cutoff := time.Now().UTC().Add(-time.Duration(rule.WindowSeconds) * time.Second)
 			count := 0
 			filtered := make([]time.Time, 0, len(timestamps))
 
