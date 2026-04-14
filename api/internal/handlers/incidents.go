@@ -19,10 +19,30 @@ func NewIncidentHandler(db *sql.DB) *IncidentHandler {
 	return &IncidentHandler{DB: db}
 }
 
-func (h *IncidentHandler) List(c *gin.Context) {
+func getProjectIDFromContext(c *gin.Context) (uuid.UUID, bool) {
 	projectID, ok := middleware.GetProjectID(c)
+	if ok {
+		return projectID, true
+	}
+
+	projectIDStr := c.Query("project_id")
+	if projectIDStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "project_id required"})
+		return uuid.Nil, false
+	}
+
+	parsed, err := uuid.Parse(projectIDStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid project_id"})
+		return uuid.Nil, false
+	}
+
+	return parsed, true
+}
+
+func (h *IncidentHandler) List(c *gin.Context) {
+	projectID, ok := getProjectIDFromContext(c)
 	if !ok {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "project_id not found in context"})
 		return
 	}
 
@@ -40,9 +60,8 @@ func (h *IncidentHandler) List(c *gin.Context) {
 }
 
 func (h *IncidentHandler) Resolve(c *gin.Context) {
-	projectID, ok := middleware.GetProjectID(c)
+	projectID, ok := getProjectIDFromContext(c)
 	if !ok {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "project_id not found in context"})
 		return
 	}
 

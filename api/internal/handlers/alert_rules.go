@@ -6,7 +6,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"stacktrace/internal/middleware"
 	"stacktrace/internal/models"
 	"stacktrace/internal/repository"
 )
@@ -28,9 +27,8 @@ type CreateAlertRuleInput struct {
 }
 
 func (h *AlertRuleHandler) Create(c *gin.Context) {
-	projectID, ok := middleware.GetProjectID(c)
+	projectID, ok := getProjectIDFromContext(c)
 	if !ok {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "project_id not found in context"})
 		return
 	}
 
@@ -58,9 +56,8 @@ func (h *AlertRuleHandler) Create(c *gin.Context) {
 }
 
 func (h *AlertRuleHandler) List(c *gin.Context) {
-	projectID, ok := middleware.GetProjectID(c)
+	projectID, ok := getProjectIDFromContext(c)
 	if !ok {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "project_id not found in context"})
 		return
 	}
 
@@ -78,9 +75,8 @@ func (h *AlertRuleHandler) List(c *gin.Context) {
 }
 
 func (h *AlertRuleHandler) Delete(c *gin.Context) {
-	projectID, ok := middleware.GetProjectID(c)
+	projectID, ok := getProjectIDFromContext(c)
 	if !ok {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "project_id not found in context"})
 		return
 	}
 

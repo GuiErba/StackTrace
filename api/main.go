@@ -3,7 +3,9 @@ package main
 import (
 	"log"
 	"os"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 
@@ -51,29 +53,54 @@ func main() {
 
 	router := gin.Default()
 
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:3000"},
+		AllowMethods:     []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Authorization", "Content-Type"},
+		ExposeHeaders:    []string{"X-RateLimit-Limit", "X-RateLimit-Remaining"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
+
 	healthHandler := handlers.NewHealthHandler(db)
+	authHandler := handlers.NewAuthHandler(db, emailNotifier)
 	logHandler := handlers.NewLogHandler(db)
 	alertRuleHandler := handlers.NewAlertRuleHandler(db)
 	incidentHandler := handlers.NewIncidentHandler(db)
 	statusHandler := handlers.NewStatusHandler(db)
+	projectHandler := handlers.NewProjectHandler(db)
+	metricsHandler := handlers.NewMetricsHandler(db)
 
+	// Public routes (no auth)
 	router.GET("/health", healthHandler.Check)
 	router.GET("/status/:slug", statusHandler.GetBySlug)
+	router.POST("/auth/send-code", authHandler.SendCode)
+	router.POST("/auth/verify-code", authHandler.VerifyCode)
 
-	auth := router.Group("/")
-	auth.Use(middleware.Auth(db))
-	auth.Use(middleware.RateLimit())
+	// JWT auth routes (dashboard)
+	jwt := router.Group("/")
+	jwt.Use(middleware.JWTAuth())
 	{
-		auth.POST("/logs", logHandler.IngestLog)
-		auth.POST("/logs/batch", logHandler.IngestBatch)
-		auth.GET("/logs", logHandler.QueryLogs)
+		jwt.GET("/projects", projectHandler.List)
+		jwt.POST("/projects", projectHandler.Create)
+		jwt.POST("/projects/:id/rotate-key", projectHandler.RotateKey)
 
-		auth.POST("/alert-rules", alertRuleHandler.Create)
-		auth.GET("/alert-rules", alertRuleHandler.List)
-		auth.DELETE("/alert-rules/:id", alertRuleHandler.Delete)
+		jwt.GET("/dashboard/logs", logHandler.QueryLogs)
+		jwt.GET("/dashboard/incidents", incidentHandler.List)
+		jwt.PATCH("/dashboard/incidents/:id/resolve", incidentHandler.Resolve)
+		jwt.GET("/dashboard/alert-rules", alertRuleHandler.List)
+		jwt.POST("/dashboard/alert-rules", alertRuleHandler.Create)
+		jwt.DELETE("/dashboard/alert-rules/:id", alertRuleHandler.Delete)
+		jwt.GET("/dashboard/metrics/overview", metricsHandler.Overview)
+	}
 
-		auth.GET("/incidents", incidentHandler.List)
-		auth.PATCH("/incidents/:id/resolve", incidentHandler.Resolve)
+	// API key auth routes (SDK)
+	sdk := router.Group("/")
+	sdk.Use(middleware.Auth(db))
+	sdk.Use(middleware.RateLimit())
+	{
+		sdk.POST("/logs", logHandler.IngestLog)
+		sdk.POST("/logs/batch", logHandler.IngestBatch)
 	}
 
 	port := os.Getenv("PORT")

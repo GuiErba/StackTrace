@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"stacktrace/internal/middleware"
 	"stacktrace/internal/models"
 	"stacktrace/internal/repository"
@@ -131,8 +132,17 @@ func (h *LogHandler) IngestBatch(c *gin.Context) {
 func (h *LogHandler) QueryLogs(c *gin.Context) {
 	projectID, ok := middleware.GetProjectID(c)
 	if !ok {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "project_id not found in context"})
-		return
+		projectIDStr := c.Query("project_id")
+		if projectIDStr == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "project_id required"})
+			return
+		}
+		parsed, err := uuid.Parse(projectIDStr)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid project_id"})
+			return
+		}
+		projectID = parsed
 	}
 
 	filters := models.LogFilter{
