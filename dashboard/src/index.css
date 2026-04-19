@@ -1,0 +1,140 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+
+  --color-bg-primary: #0a0a0f;
+  --color-bg-secondary: #111119;
+  --color-bg-card: #16161f;
+  --color-bg-hover: #1e1e2a;
+  --color-bg-input: #1a1a25;
+
+  --color-border: #2a2a3a;
+  --color-border-focus: #6366f1;
+
+  --color-text-primary: #f1f1f6;
+  --color-text-secondary: #8b8ba3;
+  --color-text-muted: #5b5b73;
+
+  --color-accent: #6366f1;
+  --color-accent-hover: #818cf8;
+
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+
+  --color-info-bg: #1e293b;
+  --color-warn-bg: #2d2005;
+  --color-error-bg: #2d0b0b;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+
+/* ─── Component Classes ──────────────────────────────────── */
+
+.badge {
+  @apply inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wider;
+}
+.badge-info {
+  @apply bg-(--color-info-bg) text-blue-400;
+}
+.badge-warn {
+  @apply bg-(--color-warn-bg) text-amber-300;
+}
+.badge-error {
+  @apply bg-(--color-error-bg) text-red-400;
+}
+.badge-open {
+  @apply bg-(--color-error-bg) text-(--color-danger);
+}
+.badge-resolved {
+  @apply bg-green-950 text-(--color-success);
+}
+.badge-operational {
+  @apply bg-green-950 text-(--color-success);
+}
+
+.card {
+  @apply bg-(--color-bg-card) border border-(--color-border) rounded-xl p-5;
+}
+
+.input {
+  @apply bg-(--color-bg-input) border border-(--color-border) rounded-lg px-3.5 py-2.5 text-(--color-text-primary) text-sm w-full outline-none transition-colors duration-150 placeholder:text-(--color-text-muted);
+}
+.input:focus {
+  @apply border-(--color-border-focus);
+}
+
+.btn {
+  @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium cursor-pointer border-none transition-all duration-150;
+}
+.btn-primary {
+  @apply bg-(--color-accent) text-white;
+}
+.btn-primary:hover {
+  @apply bg-(--color-accent-hover);
+}
+.btn-primary:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+.btn-danger {
+  @apply bg-transparent text-(--color-danger) border border-(--color-danger);
+}
+.btn-danger:hover {
+  @apply bg-(--color-error-bg);
+}
+.btn-ghost {
+  @apply bg-transparent text-(--color-text-secondary) border border-(--color-border);
+}
+.btn-ghost:hover {
+  @apply bg-(--color-bg-hover) text-(--color-text-primary);
+}
+
+.select {
+  @apply appearance-none bg-(--color-bg-input) border border-(--color-border) rounded-lg px-3.5 py-2.5 text-(--color-text-primary) text-sm outline-none cursor-pointer;
+}
+.select:focus {
+  @apply border-(--color-border-focus);
+}
+
+/* ─── Reusable Utility Patterns ──────────────────────────── */
+
+.page-title {
+  @apply text-[22px] font-bold mb-6;
+}
+
+.section-title {
+  @apply text-[15px] font-semibold mb-4;
+}
+
+.form-label {
+  @apply block text-[13px] font-medium text-(--color-text-secondary) mb-1.5;
+}
+
+.text-muted {
+  @apply text-(--color-text-secondary) text-sm;
+}
