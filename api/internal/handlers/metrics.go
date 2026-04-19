@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
+	"stacktrace/internal/middleware"
 	"stacktrace/internal/repository"
 )
 
@@ -18,15 +18,9 @@ func NewMetricsHandler(db *sql.DB) *MetricsHandler {
 }
 
 func (h *MetricsHandler) Overview(c *gin.Context) {
-	projectIDStr := c.Query("project_id")
-	if projectIDStr == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "project_id query parameter required"})
-		return
-	}
-
-	projectID, err := uuid.Parse(projectIDStr)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid project_id"})
+	projectID, ok := middleware.GetProjectID(c)
+	if !ok {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "project_id not found in context"})
 		return
 	}
 

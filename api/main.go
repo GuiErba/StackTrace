@@ -77,21 +77,27 @@ func main() {
 	router.POST("/auth/send-code", authHandler.SendCode)
 	router.POST("/auth/verify-code", authHandler.VerifyCode)
 
-	// JWT auth routes (dashboard)
+	// JWT auth routes (project management)
 	jwt := router.Group("/")
 	jwt.Use(middleware.JWTAuth())
 	{
 		jwt.GET("/projects", projectHandler.List)
 		jwt.POST("/projects", projectHandler.Create)
 		jwt.POST("/projects/:id/rotate-key", projectHandler.RotateKey)
+	}
 
-		jwt.GET("/dashboard/logs", logHandler.QueryLogs)
-		jwt.GET("/dashboard/incidents", incidentHandler.List)
-		jwt.PATCH("/dashboard/incidents/:id/resolve", incidentHandler.Resolve)
-		jwt.GET("/dashboard/alert-rules", alertRuleHandler.List)
-		jwt.POST("/dashboard/alert-rules", alertRuleHandler.Create)
-		jwt.DELETE("/dashboard/alert-rules/:id", alertRuleHandler.Delete)
-		jwt.GET("/dashboard/metrics/overview", metricsHandler.Overview)
+	// Dashboard routes (JWT + project ownership verification)
+	dashboard := router.Group("/dashboard")
+	dashboard.Use(middleware.JWTAuth())
+	dashboard.Use(middleware.ProjectOwnership(db))
+	{
+		dashboard.GET("/logs", logHandler.QueryLogs)
+		dashboard.GET("/incidents", incidentHandler.List)
+		dashboard.PATCH("/incidents/:id/resolve", incidentHandler.Resolve)
+		dashboard.GET("/alert-rules", alertRuleHandler.List)
+		dashboard.POST("/alert-rules", alertRuleHandler.Create)
+		dashboard.DELETE("/alert-rules/:id", alertRuleHandler.Delete)
+		dashboard.GET("/metrics/overview", metricsHandler.Overview)
 	}
 
 	// API key auth routes (SDK)
