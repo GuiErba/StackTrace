@@ -81,12 +81,30 @@ func (w *alertWorker) evaluate() {
         }
 		rules, err := repository.GetAlertRulesByProjectID(w.db, projectID)
 		if err != nil {
+			log.Printf("alert: failed to fetch rules for project %s: %v", projectID, err)
 			continue
 		}
         if len(rules) == 0 {
             continue
         }
 
+		maxWindow := 0
+		for _, rule := range rules {
+			if rule.Condition == "error_count" && rule.WindowSeconds > maxWindow {
+				maxWindow = rule.WindowSeconds
+			}
+		}
+
+		widestCutoff := time.Now().UTC().Add(-time.Duration(maxWindow) * time.Second)
+		filtered := make([]time.Time, 0, len(timestamps))
+		for _, ts := range timestamps {
+			if ts.After(widestCutoff) {
+				filtered = append(filtered, ts)
+			}
+		}
+		w.windows[projectID] = filtered
+
+		triggered := false
 		for _, rule := range rules {
 			if rule.Condition != "error_count" {
 				continue
@@ -94,21 +112,20 @@ func (w *alertWorker) evaluate() {
 
 			cutoff := time.Now().UTC().Add(-time.Duration(rule.WindowSeconds) * time.Second)
 			count := 0
-			filtered := make([]time.Time, 0, len(timestamps))
-
-			for _, ts := range timestamps {
+			for _, ts := range filtered {
 				if ts.After(cutoff) {
-					filtered = append(filtered, ts)
 					count++
 				}
 			}
 
-			w.windows[projectID] = filtered
-
 			if count >= rule.Threshold {
 				w.triggerAlert(projectID, rule, count)
-				w.windows[projectID] = nil
+				triggered = true
 			}
+		}
+
+		if triggered || len(filtered) == 0 {
+			delete(w.windows, projectID)
 		}
 	}
 }
