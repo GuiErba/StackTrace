@@ -7,13 +7,13 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	_ "github.com/lib/pq"
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 func main() {
 	godotenv.Load()
 
-	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+	db, err := sql.Open("pgx", os.Getenv("DATABASE_URL"))
 	if err != nil {
 		log.Fatal(err)
 	}
