@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: stacktrace-api
+    runtime: docker
+    dockerfilePath: ./api/Dockerfile
+    dockerContext: ./api
+    plan: free
+    envVars:
+      - key: PORT
+        value: "8080"
+      - key: GIN_MODE
+        value: release
+      - key: DATABASE_URL
+        sync: false
+      - key: UPSTASH_REDIS_URL
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_FROM
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: "https://stacktrace.pages.dev"
+    healthCheckPath: /health
