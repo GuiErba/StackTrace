@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -54,7 +55,7 @@ func main() {
 	router := gin.Default()
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:3000"},
+		AllowOrigins:     getAllowedOrigins(),
 		AllowMethods:     []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Authorization", "Content-Type"},
 		ExposeHeaders:    []string{"X-RateLimit-Limit", "X-RateLimit-Remaining"},
@@ -118,4 +119,11 @@ func main() {
 	if err := router.Run(":" + port); err != nil {
 		log.Fatal("Failed to start server: ", err)
 	}
+}
+
+func getAllowedOrigins() []string {
+	if origins := os.Getenv("CORS_ORIGINS"); origins != "" {
+		return strings.Split(origins, ",")
+	}
+	return []string{"http://localhost:5173", "http://localhost:3000"}
 }
