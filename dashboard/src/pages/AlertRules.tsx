@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTitle } from "../hooks/useTitle";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useProject } from "../context/ProjectContext";
 import { api } from "../lib/api";
@@ -14,6 +15,7 @@ interface AlertRule {
 }
 
 export default function AlertRules() {
+  useTitle("Alert Rules");
   const { selectedProject } = useProject();
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);

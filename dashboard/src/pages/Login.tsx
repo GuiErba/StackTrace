@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useTitle } from "../hooks/useTitle";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Shield } from "lucide-react";
 
 export default function Login() {
+  useTitle("Login");
   const { sendCode, verifyCode } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");

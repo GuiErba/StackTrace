@@ -3,8 +3,10 @@ import { useProject } from "../context/ProjectContext";
 import { api } from "../lib/api";
 import { CheckCircle } from "lucide-react";
 import type { Incident } from "../types/incidents";
+import { useTitle } from "../hooks/useTitle";
 
 export default function Incidents() {
+  useTitle("Incidents");
   const { selectedProject } = useProject();
   const queryClient = useQueryClient();
 

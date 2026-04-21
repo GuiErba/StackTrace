@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useLogs } from "../hooks/useLogs";
 import { useProject } from "../context/ProjectContext";
+import { useTitle } from "../hooks/useTitle";
 import { Search, ChevronDown, ChevronRight } from "lucide-react";
 
 export default function Logs() {
+  useTitle("Logs");
   const { selectedProject } = useProject();
   const [level, setLevel] = useState("");
   const [service, setService] = useState("");

@@ -7,8 +7,10 @@ import {
 } from "recharts";
 import { Activity, AlertTriangle, ScrollText } from "lucide-react";
 import type { Incident } from "../types/incidents";
+import { useTitle } from "../hooks/useTitle";
 
 export default function Overview() {
+  useTitle("Overview");
   const { selectedProject } = useProject();
   const { data: metrics, isLoading } = useMetrics(selectedProject?.id);
 

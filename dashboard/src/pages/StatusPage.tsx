@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { CheckCircle, AlertTriangle, Shield } from "lucide-react";
 import { BASE_URL } from "../lib/api";
+import { useTitle } from "../hooks/useTitle";
 
 interface StatusData {
   project: string;
@@ -28,6 +29,8 @@ export default function StatusPage() {
     },
     refetchInterval: 30000,
   });
+
+  useTitle(data?.project ? `Status - ${data.project}` : "Status");
 
   if (isLoading) {
     return (

@@ -12,6 +12,7 @@ import {
   Shield,
 } from "lucide-react";
 import { useState } from "react";
+import { useTitle } from "../hooks/useTitle";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "../lib/api";
 import { Copy, Check, Key } from "lucide-react";
@@ -25,6 +26,7 @@ const navItems = [
 ];
 
 function OnboardingScreen() {
+  useTitle("Welcome");
   const { refreshProjects } = useProject();
   const { user, logout } = useAuth();
   const navigate = useNavigate();

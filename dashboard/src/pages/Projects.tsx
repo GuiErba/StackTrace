@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useTitle } from "../hooks/useTitle";
 import { useMutation } from "@tanstack/react-query";
 import { useProject } from "../context/ProjectContext";
 import { api } from "../lib/api";
 import { Copy, Check, FolderPlus, RotateCw, Key } from "lucide-react";
 
 export default function Projects() {
+  useTitle("Projects");
   const { projects, refreshProjects, selectProject, selectedProject } = useProject();
   const [showCreate, setShowCreate] = useState(false);
   const [name, setName] = useState("");
