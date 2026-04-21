@@ -29,11 +29,6 @@
   --color-error-bg: #2d0b0b;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
 
 body {
   font-family: var(--font-sans);
