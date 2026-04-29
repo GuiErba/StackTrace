@@ -43,7 +43,6 @@ function OnboardingScreen() {
       ),
     onSuccess: (data) => {
       setNewApiKey(data.api_key);
-      refreshProjects();
     },
   });
 
@@ -97,7 +96,9 @@ function OnboardingScreen() {
             </div>
             <button
               className="btn btn-primary w-full"
-              onClick={() => navigate("/")}
+              onClick={() => {
+                refreshProjects().then(() => navigate("/"));
+              }}
             >
               Go to Dashboard
             </button>
@@ -188,7 +189,7 @@ export default function Layout() {
     navigate("/login");
   };
 
-  if (isLoading) {
+  if (isLoading && !hasLoaded) {
     return (
       <div className="min-h-screen flex items-center justify-center text-(--color-text-secondary)">
         Loading...
