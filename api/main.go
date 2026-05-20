@@ -74,6 +74,7 @@ func main() {
 
 	// Public routes (no auth)
 	router.GET("/health", healthHandler.Check)
+	router.GET("/health/deep", healthHandler.DeepCheck)
 	router.GET("/status/:slug", statusHandler.GetBySlug)
 	router.POST("/auth/send-code", authHandler.SendCode)
 	router.POST("/auth/verify-code", authHandler.VerifyCode)

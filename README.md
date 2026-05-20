@@ -179,7 +179,8 @@ Render's free tier sleeps after 15 minutes of inactivity. Use [BetterStack](http
 | `DELETE` | `/dashboard/alert-rules/:id` | JWT | Delete alert rule |
 | `GET` | `/dashboard/metrics/overview` | JWT | Get overview metrics |
 | `GET` | `/status/:slug` | None | Public status page |
-| `GET` | `/health` | None | Health check |
+| `GET` | `/health` | None | Health check (lightweight) |
+| `GET` | `/health/deep` | None | Health check (DB + Redis) |
 
 ---
 

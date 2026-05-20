@@ -23,3 +23,6 @@ temp/
 
 # Internal docs (not committed)
 .docs/
+
+# Demo App
+demo-app/
