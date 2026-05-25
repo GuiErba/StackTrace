@@ -1,6 +1,6 @@
 # StackTrace
 
-Open-source observability platform for Micro SaaS founders. Get logs, incident detection, and email alerts without the complexity of Datadog or New Relic.
+Open-source observability platform for Micro SaaS founders and Developers. Get logs, incident detection, and email alerts without the complexity of Datadog or New Relic.
 
 **"Is my app working? What broke?"** — StackTrace answers these questions in plain language, with zero infrastructure knowledge required.
 
