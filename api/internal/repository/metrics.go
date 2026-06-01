@@ -44,7 +44,7 @@ func GetOverviewMetrics(db *sql.DB, projectID uuid.UUID) (*OverviewMetrics, erro
 
 	hourlyQuery := `
 		SELECT
-			time_bucket('1 hour', timestamp) AS hour,
+			date_trunc('hour', timestamp) AS hour,
 			COUNT(*) AS count
 		FROM logs
 		WHERE project_id = $1 AND timestamp >= NOW() - INTERVAL '24 hours'
