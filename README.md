@@ -6,6 +6,12 @@ Open-source observability platform for Micro SaaS founders and Developers. Get l
 
 ---
 
+## 📺 System Design
+
+[![System Design Video](https://img.youtube.com/vi/7dGqcdUFoT0/maxresdefault.jpg)](https://youtu.be/7dGqcdUFoT0?si=NEJ3CBVIQv6TPHjV)
+
+---
+
 ## Features
 
 - **Log Ingestion** — Receive logs from any backend via SDK or HTTP
